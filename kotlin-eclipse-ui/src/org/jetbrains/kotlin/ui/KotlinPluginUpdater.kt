@@ -90,7 +90,12 @@ public object KotlinPluginUpdater {
     }
     
     private fun getKotlinInstallationUnit(monitor: IProgressMonitor): IInstallableUnit? {
-        return OperationFactory().listInstalledElements(true, monitor).find { it.id == KOTLIN_GROUP_ID }
+		try {
+			return OperationFactory().listInstalledElements(true, monitor).find { it.id == KOTLIN_GROUP_ID }
+		} catch (e: NullPointerException) {
+			// Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=461102
+			return null
+		}
     }
     
     private fun checkTimeIsUp(lastTry: Long, delay: Long): Boolean = System.currentTimeMillis() - lastTry > delay
